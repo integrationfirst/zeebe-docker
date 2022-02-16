@@ -58,6 +58,10 @@ ENV ZB_HOME=/usr/local/zeebe \
     ZEEBE_STANDALONE_GATEWAY=false
 ENV PATH "${ZB_HOME}/bin:${PATH}"
 
+WORKDIR ${ZB_HOME}
+EXPOSE 26500 26501 26502
+VOLUME ${ZB_HOME}/data
+
 RUN groupadd -g 1000 zeebe && \
     adduser -u 1000 zeebe --system --ingroup zeebe && \
     chmod g=u /etc/passwd && \
@@ -66,9 +70,5 @@ RUN groupadd -g 1000 zeebe && \
 
 COPY --from=builder --chown=1000:0 ${TMP_DIR}/bin/startup.sh /usr/local/bin/startup.sh
 COPY --from=builder --chown=1000:0 ${TMP_DIR} ${ZB_HOME}
-
-WORKDIR ${ZB_HOME}
-EXPOSE 26500 26501 26502
-VOLUME ${ZB_HOME}/data
 
 ENTRYPOINT ["tini", "--", "/usr/local/bin/startup.sh"]
