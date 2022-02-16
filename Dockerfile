@@ -2,7 +2,7 @@ ARG APP_ENV=prod
 
 # Building builder image
 FROM alpine:latest as builder
-ARG DISTBALL
+#ARG DISTBALL
 
 # build arguments for user/group configurations
 ARG USER=zeebe
@@ -22,7 +22,7 @@ ENV TMP_ARCHIVE=/tmp/zeebe.tar.gz \
     TMP_DIR=/tmp/zeebe \
     TINI_VERSION=v0.19.0
 
-COPY ${DISTBALL} ${TMP_ARCHIVE}
+#COPY ${DISTBALL} ${TMP_ARCHIVE}
 
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl jq wget
