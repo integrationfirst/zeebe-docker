@@ -11,11 +11,12 @@ ARG USER_GROUP=wso2
 ARG USER_GROUP_ID=802
 ARG USER_HOME=/home/${USER}
 
-ARG PRODUCT_NAME=zeebe
+ARG PRODUCT_REPOSITORY_NAME=zeebe
+ARG PRODUCT_NAME=camunda-cloud-zeebe
 ARG PRODUCT_VERSION=1.3.4
 ARG PRODUCT=${PRODUCT_NAME}-${PRODUCT_VERSION}
 ARG PRODUCT_HOME=${USER_HOME}/${PRODUCT}
-ARG PRODUCT_DIST_URL=https://github.com/camunda-cloud/${PRODUCT_NAME}/releases/download/${PRODUCT_VERSION}/${PRODUCT}.tar.gz
+ARG PRODUCT_DIST_URL=https://github.com/camunda-cloud/${PRODUCT_REPOSITORY_NAME}/releases/download/${PRODUCT_VERSION}/${PRODUCT}.tar.gz
 # Sample: https://github.com/camunda-cloud/zeebe/releases/download/1.3.4/camunda-cloud-zeebe-1.3.4.tar.gz
 
 ARG TMP_ARCHIVE=/tmp/zeebe.tar.gz
