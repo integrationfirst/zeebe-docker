@@ -69,7 +69,7 @@ RUN groupadd -g 1000 zeebe && \
     chown 1000:0 ${ZB_HOME} && \
     chmod 0775 ${ZB_HOME}
 
-COPY --from=builder --chown=1000:0 ${TMP_DIR}/bin/startup.sh /usr/local/bin/startup.sh
-COPY --from=builder --chown=1000:0 ${TMP_DIR} ${ZB_HOME}
+COPY --from=builder --chown=1000:0 /tmp/zeebe/bin/startup.sh /usr/local/bin/startup.sh
+COPY --from=builder --chown=1000:0 /tmp/zeebe ${ZB_HOME}
 
 ENTRYPOINT ["tini", "--", "/usr/local/bin/startup.sh"]
