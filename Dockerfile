@@ -4,14 +4,33 @@ ARG APP_ENV=prod
 FROM alpine:latest as builder
 ARG DISTBALL
 
+# build arguments for user/group configurations
+ARG USER=zeebe
+ARG USER_ID=802
+ARG USER_GROUP=wso2
+ARG USER_GROUP_ID=802
+ARG USER_HOME=/home/${USER}
+
+ARG PRODUCT_NAME=zeebe
+ARG PRODUCT_VERSION=1.3.4
+ARG PRODUCT=${PRODUCT_NAME}-${PRODUCT_VERSION}
+ARG PRODUCT_HOME=${USER_HOME}/${PRODUCT}
+ARG PRODUCT_DIST_URL=https://github.com/camunda-cloud/${PRODUCT_NAME}/releases/download/${PRODUCT_VERSION}/${PRODUCT}.tar.gz
+# Sample: https://github.com/camunda-cloud/zeebe/releases/download/1.3.4/camunda-cloud-zeebe-1.3.4.tar.gz
+
 ENV TMP_ARCHIVE=/tmp/zeebe.tar.gz \
     TMP_DIR=/tmp/zeebe \
     TINI_VERSION=v0.19.0
 
 COPY ${DISTBALL} ${TMP_ARCHIVE}
 
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl jq wget
+
+RUN wget -O /tmp/${PRODUCT}.tar.gz "${PRODUCT_DIST_URL}"
+
 RUN mkdir -p ${TMP_DIR} && \
-    tar xfvz ${TMP_ARCHIVE} --strip 1 -C ${TMP_DIR} && \
+    tar xfvz /tmp/${PRODUCT}.tar.gz --strip 1 -C ${TMP_DIR} && \
     # already create volume dir to later have correct rights
     mkdir ${TMP_DIR}/data
 
