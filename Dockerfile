@@ -1,5 +1,5 @@
 #ARG APP_ENV=prod
-FROM eclipse-temurin:17-jre-focal
+FROM eclipse-temurin:17-jre-focal AS builder
 # Building builder image
 #FROM alpine:latest as builder
 #ARG DISTBALL
@@ -62,8 +62,8 @@ RUN groupadd -g 1000 zeebe && \
     chown 1000:0 ${ZB_HOME} && \
     chmod 0775 ${ZB_HOME}
 
-COPY /tmp/zeebe/bin/startup.sh /usr/local/bin/startup.sh
-COPY /tmp/zeebe ${ZB_HOME}
+COPY --from=builder --chown=1000:0 /tmp/zeebe/bin/startup.sh /usr/local/bin/startup.sh
+COPY --from=builder --chown=1000:0 /tmp/zeebe ${ZB_HOME}
 
 WORKDIR ${ZB_HOME}
 EXPOSE 26500 26501 26502
