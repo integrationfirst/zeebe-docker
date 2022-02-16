@@ -1,5 +1,5 @@
 #ARG APP_ENV=prod
-FROM eclipse-temurin:17-jre-focal
+FROM eclipse-temurin:17-jre-focal as builder
 # Building builder image
 #FROM alpine:latest as builder
 #ARG DISTBALL
@@ -18,9 +18,9 @@ ARG PRODUCT_HOME=${USER_HOME}/${PRODUCT}
 ARG PRODUCT_DIST_URL=https://github.com/camunda-cloud/${PRODUCT_NAME}/releases/download/${PRODUCT_VERSION}/${PRODUCT}.tar.gz
 # Sample: https://github.com/camunda-cloud/zeebe/releases/download/1.3.4/camunda-cloud-zeebe-1.3.4.tar.gz
 
-ENV TMP_ARCHIVE=/tmp/zeebe.tar.gz \
-    TMP_DIR=/tmp/zeebe \
-    TINI_VERSION=v0.19.0
+ARG TMP_ARCHIVE=/tmp/zeebe.tar.gz
+ARG TMP_DIR=/tmp/zeebe
+ARG TINI_VERSION=v0.19.0
 
 #COPY ${DISTBALL} ${TMP_ARCHIVE}
 
@@ -66,7 +66,7 @@ RUN groupadd -g 1000 zeebe && \
     chown 1000:0 ${ZB_HOME} && \
     chmod 0775 ${ZB_HOME}
 
-COPY --chown=1000:0 /tmp/zeebe/bin/startup.sh /usr/local/bin/startup.sh
-COPY --chown=1000:0 /tmp/zeebe ${ZB_HOME}
+COPY --from=builder --chown=1000:0 /tmp/zeebe/bin/startup.sh /usr/local/bin/startup.sh
+COPY --from=builder --chown=1000:0 /tmp/zeebe ${ZB_HOME}
 
 ENTRYPOINT ["tini", "--", "/usr/local/bin/startup.sh"]
