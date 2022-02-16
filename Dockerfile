@@ -51,6 +51,8 @@ RUN chmod 0775 ${TMP_DIR} ${TMP_DIR}/data
 # Building application image
 #FROM ${APP_ENV} as app
 
+FROM eclipse-temurin:17-jre-focal
+
 ENV ZB_HOME=/usr/local/zeebe \
     ZEEBE_BROKER_GATEWAY_NETWORK_HOST=0.0.0.0 \
     ZEEBE_STANDALONE_GATEWAY=false
@@ -62,8 +64,8 @@ RUN groupadd -g 1000 zeebe && \
     chown 1000:0 ${ZB_HOME} && \
     chmod 0775 ${ZB_HOME}
 
-COPY --from=builder --chown=1000:0 /tmp/zeebe/bin/startup.sh /usr/local/bin/startup.sh
-COPY --from=builder --chown=1000:0 /tmp/zeebe ${ZB_HOME}
+COPY --from=builder --chown=1000:0 ${TMP_DIR}/bin/startup.sh /usr/local/bin/startup.sh
+COPY --from=builder --chown=1000:0 ${TMP_DIR} ${ZB_HOME}
 
 WORKDIR ${ZB_HOME}
 EXPOSE 26500 26501 26502
