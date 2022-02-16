@@ -1,5 +1,5 @@
 #ARG APP_ENV=prod
-FROM eclipse-temurin:17-jre-focal as builder
+FROM eclipse-temurin:17-jre-focal
 # Building builder image
 #FROM alpine:latest as builder
 #ARG DISTBALL
@@ -56,17 +56,17 @@ ENV ZB_HOME=/usr/local/zeebe \
     ZEEBE_STANDALONE_GATEWAY=false
 ENV PATH "${ZB_HOME}/bin:${PATH}"
 
-WORKDIR ${ZB_HOME}
-EXPOSE 26500 26501 26502
-VOLUME ${ZB_HOME}/data
-
 RUN groupadd -g 1000 zeebe && \
     adduser -u 1000 zeebe --system --ingroup zeebe && \
     chmod g=u /etc/passwd && \
     chown 1000:0 ${ZB_HOME} && \
     chmod 0775 ${ZB_HOME}
 
-COPY --from=builder --chown=1000:0 /tmp/zeebe/bin/startup.sh /usr/local/bin/startup.sh
-COPY --from=builder --chown=1000:0 /tmp/zeebe ${ZB_HOME}
+COPY --chown=1000:0 /tmp/zeebe/bin/startup.sh /usr/local/bin/startup.sh
+COPY --chown=1000:0 /tmp/zeebe ${ZB_HOME}
+
+WORKDIR ${ZB_HOME}
+EXPOSE 26500 26501 26502
+VOLUME ${ZB_HOME}/data
 
 ENTRYPOINT ["tini", "--", "/usr/local/bin/startup.sh"]
